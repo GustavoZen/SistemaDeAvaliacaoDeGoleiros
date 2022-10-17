@@ -46,10 +46,4 @@ public class goleiro {
 	public int getAAG() {
 		return this.AAG;
 	}
-
-	public String quadranteDoChute(String[][]Gol){
-		int x = rand0_8();
-		int y = rand0_16();
-		return Gol[x][y];
-	}
 }
