@@ -16,7 +16,7 @@ public class principal {
 		CelulaGol[][] Gol = new CelulaGol[9][17];
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 17; j++) {
-				Gol[i][j] = new CelulaGol(0, 0, 0, false, false);
+				Gol[i][j] = new CelulaGol(0, 0, 0, false, false, 0);
 			}
 		}
 		/* Listas */
@@ -43,6 +43,7 @@ public class principal {
 		}
 		System.out.println("A sua seleção é composta por: ");
 		for (goleiro g : Selecao) {
+			g.iniciar();
 			System.out.println("Nome: " + g.getNome());
 			System.out.println("\tVelocidade: " + g.getVelocidade());
 			System.out.println("\tFlexibilidade: " + g.getFlexibilidade());
@@ -71,7 +72,11 @@ public class principal {
 				selecionado = go;
 			System.out.println("\n" + go.getNome() + " defendeu " + go.getGolsDefendidos() + " Gols,");
 			System.out.println("e perdeu " + (go.getGolsPerdidos()));
+			System.out.println(go.getGolsPerdidoPorFaltaDeForca() + " gol(s) foram perdidos por falta de força");
 			media += go.getGolsDefendidos();
+			System.out.println("Gols no feitos no quadrante 1: " + go.getGq1() + "\n2: " + go.getGq2() + "\n3: "
+					+ go.getGq3() + "\n4: " + go.getGq4());
+			go.printGolsPorCelula(go.getGol());
 		}
 		media = media / 5;
 		System.out.println("A média de gols defendidos de sua seleção foi: " + media);
@@ -93,7 +98,7 @@ public class principal {
 				naGaveta++;
 			}
 		}
-		System.out.println("Chutes fora: " + fora);
+		System.out.println("\nChutes fora: " + fora);
 		System.out.println("Chutes dentro: " + dentro);
 		System.out.println("Chutes na trave esquerda: " + traveEsquerda);
 		System.out.println("Chutes na trave direita: " + traveDireita);

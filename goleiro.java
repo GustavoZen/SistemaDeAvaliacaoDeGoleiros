@@ -3,6 +3,7 @@ package Package;
 import java.util.Random;
 
 public class goleiro {
+	private CelulaGol[][] Gol = new CelulaGol[9][17];
 	private int id;
 	private String nome;
 	private int velocidade;
@@ -14,7 +15,15 @@ public class goleiro {
 	private int AAG;
 	private int golsDefendidos = 0;
 	private int golsPerdidos = 0;
+	private int golsPerdidoPorFaltaDeForca = 0;
+	private int gq1 = 0, gq2 = 0, gq3 = 0, gq4 = 0;
 
+	public void iniciar(){
+		for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 17; j++) {
+			Gol[i][j] = new CelulaGol(0, 0, 0, false, false, 0);
+		}
+	}}
 	public goleiro() {
 
 	}
@@ -43,7 +52,7 @@ public class goleiro {
 		return this.AAG;
 	}
 
-	public void criarAreaDeDefesa(CelulaGol[][] Gol, Chute chute) {
+	public void criarAreaDeDefesa(Chute chute) {
 		int quadrado = 0;
 		int xg, yg;
 		for (;; quadrado++) {
@@ -73,6 +82,12 @@ public class goleiro {
 			for (int j = 0; j < quadrado; j++) {
 				if (xg - i >= 0 && yg + i < 17)
 					Gol[xg - i][yg + j].setDefesa();
+				if (xg - i >= 0 && yg + i < 17) {
+					if (xg - i == quadrado || yg + i == quadrado) {
+						Gol[xg - i][yg + j].setAgarrarBolaComForça();
+					}
+
+				}
 			}
 		}
 		for (int i = 0; i < this.AAG - (quadrado * quadrado); i++) {
@@ -109,27 +124,68 @@ public class goleiro {
 		return nome;
 	}
 
-	public void validarGol(CelulaGol[][] Gol, Chute chute) {
+	public void validarGol(Chute chute) {
 		if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getSituacao()) {
 			if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getDefesa()) {
-				System.out.println("O goleiro " + nome + " pegou a bola\n");
-				golsDefendidos = getGolsDefendidos() + 1;
+				if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getAgarrarBolaComForca()) {
+					if (this.getForça() >= chute.getForca()) {
+						System.out.println("O goleiro " + nome + " pegou a bola no límite e a agarrou com força.\n");
+						golsDefendidos = getGolsDefendidos() + 1;
+					} else {
+						System.out.println(
+								"O goleiro " + nome + "pegou a bola no limíte mas não teve força o suficiente.");
+						golsPerdidoPorFaltaDeForca = getGolsPerdidoPorFaltaDeForca() + 1;
+						golsPerdidos = getGolsPerdidos() + 1;
+						Gol[chute.getPosicaoy()][chute.getPosicaox()].setResultado();
+					}
+
+				} else if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getDefesa()) {
+					System.out.println("O goleiro " + nome + " pegou a bola\n");
+					golsDefendidos = getGolsDefendidos() + 1;
+				}
 			} else {
 				System.out.println("O goleiro " + nome + " não pegou a bola\n");
-				golsPerdidos++;
+				golsPerdidos = getGolsPerdidos() + 1;
+				Gol[chute.getPosicaoy()][chute.getPosicaox()].setResultado();
+				if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getQuadrante() == 1) {
+					gq1++;
+				} else if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getQuadrante() == 2) {
+					gq2++;
+				} else if (Gol[chute.getPosicaoy()][chute.getPosicaox()].getQuadrante() == 3) {
+					gq3++;
+				} else
+					gq4++;
 			}
-		} else {
+		} else
 			System.out.println("A bola foi chutada para fora");
-		}
 	}
 
 	public void chuteAoGol(CelulaGol[][] a, Chute c) {
-		resetGol(a);
-		criarAreaDeDefesa(a, c);
-		validarGol(a, c);
+		resetGol();
+		criarAreaDeDefesa(c);
+		validarGol(c);
 	}
 
-	public void resetGol(CelulaGol[][] Gol) {
+	public CelulaGol[][] getGol() {
+		return Gol;
+	}
+	public int getGq1() {
+		return gq1;
+	}
+
+	public int getGq2() {
+		return gq2;
+	}
+
+	public int getGq3() {
+		return gq3;
+	}
+
+	public int getGq4() {
+		return gq4;
+	}
+
+	public void resetGol() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 17; j++) {
 				Gol[i][j].setX(i);
@@ -156,17 +212,15 @@ public class goleiro {
 		}
 	}
 
-	public void printAreaDefendida(CelulaGol[][] Gol) {
+	public void printGolsPorCelula(CelulaGol[][] Gol) {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 17; j++) {
-				if (Gol[i][j].getDefesa())
-					System.out.print("o");
-				else
-					System.out.print("x");
+				System.out.print(Gol[i][j].getResultado() + " *\t" );
 			}
 			System.out.println();
 		}
 	}
+
 
 	public int getId() {
 		return id;
@@ -178,5 +232,9 @@ public class goleiro {
 
 	public int getGolsPerdidos() {
 		return golsPerdidos;
+	}
+
+	public int getGolsPerdidoPorFaltaDeForca() {
+		return golsPerdidoPorFaltaDeForca;
 	}
 }

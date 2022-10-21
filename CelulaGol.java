@@ -6,6 +6,16 @@ public class CelulaGol {
 	public int y = 0;
 	public boolean situacao;
 	public boolean defendido;
+	public boolean agarrarBolaComForca;
+	public int resultado = 0;
+
+	public int getResultado() {
+		return resultado;
+	}
+
+	public void setResultado() {
+		resultado = getResultado() + 1;
+	}
 
 	public void setX(int a) {
 		this.x = a;
@@ -23,12 +33,13 @@ public class CelulaGol {
 		this.quadrante = a;
 	}
 
-	public CelulaGol(int a, int b, int c, boolean d, boolean e) {
+	public CelulaGol(int a, int b, int c, boolean d, boolean e,int f) {
 		this.quadrante = a;
 		this.x = b;
 		this.y = c;
 		this.situacao = d;
 		this.defendido = e;
+		this.resultado = f;
 	}
 
 	public int getQuadrante() {
@@ -49,5 +60,13 @@ public class CelulaGol {
 
 	public boolean getDefesa() {
 		return this.defendido;
+	}
+
+	public void setAgarrarBolaComForça() {
+		this.agarrarBolaComForca = true;
+	}
+
+	public boolean getAgarrarBolaComForca() {
+		return this.agarrarBolaComForca;
 	}
 }

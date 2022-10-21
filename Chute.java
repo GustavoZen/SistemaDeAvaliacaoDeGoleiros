@@ -61,4 +61,8 @@ public class Chute {
 			this.setLocaldoChute("DENTRO");
 		}
 	}
+
+	public void setForca(int forca) {
+		this.forca = forca;
+	}
 }
